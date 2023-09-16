@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Node.js + Live-server Example</title>
+</head>
+
+<body>
+  <h1>Node.js + Live-server Example</h1>
+  <input type="file" id="avatar" name="avatar" accept=".wav" />
+
+  <button id="callApi">Call API 123</button>
+  <div id="apiResponse"></div>
+  
+  <script>
+    document.getElementById('callApi').addEventListener('click', async () => {
+      const file = document.getElementById("avatar").files[0];
+      console.log(file)
+      
+      const buffer = await file.arrayBuffer();
+      // const data = Array.from(new Uint8Array(buffer))
+      // const url = window.URL.createObjectURL(new Blob([byteArray]));
+
+      var data = new FormData()
+      data.append('avatar', file)
+
+      fetch('http://localhost:3000/api', {
+        method: 'POST',
+        // headers: {
+          // "Content-Type": "multipart/form-data"
+          // 'Accept': 'application/json',
+          // 'Content-Type': 'application/json'
+        // },
+        body: data
+        // body: JSON.stringify({ a: 1, b: 'Textual content' })
+      })
+        .then(response => {
+          console.log(response);
+          return response.json()
+        })
+        .then(data => {
+          document.getElementById('apiResponse').innerText = data.message;
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    });
+  </script>
+</body>
+
+</html>
