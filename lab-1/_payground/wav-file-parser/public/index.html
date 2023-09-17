@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>WAV file parser</title>
+
+  <style>
+    table,
+    th,
+    td {
+      border: 1px solid;
+      padding: 5px;
+      text-align: center;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>WAV file parser</h1>
+
+  <div style="margin-bottom: 20px;">
+    <input type="file" id="file" name="file" accept=".wav" />
+    <button id="btnParse">Parse file</button>
+  </div>
+
+  <p id="error" style="color: red;"></p>
+
+  <table>
+    <tr>
+      <th>endian</th>
+      <th>File offset (bytes)</th>
+      <th>Field name</th>
+      <th>Field size (bytes)</th>
+      <th>value</th>
+      <th>info</th>
+    </tr>
+    <tr>
+      <td>big</td>
+      <td>0</td>
+      <td style="background-color: violet;">ChunkID</td>
+      <td>4</td>
+      <td id="chunkID">-</td>
+      <td rowspan="3">The <strong>"RIFF"</strong> chunk descriptor <BR> The Format of concern here is "WAVE", which
+        requires two
+        sub-chunks: "fmt" and "data"</td>
+    </tr>
+    <tr>
+      <td>little</td>
+      <td>4</td>
+      <td style="background-color: violet;">ChunkSize</td>
+      <td>4</td>
+      <td id="chunkSize">-</td>
+    </tr>
+    <tr>
+      <td>big</td>
+      <td>8</td>
+      <td style="background-color: violet;">Format</td>
+      <td>4</td>
+      <td id="format">-</td>
+    </tr>
+    <tr>
+      <td>big</td>
+      <td>12</td>
+      <td style="background-color: greenyellow">Subchunk 1 ID</td>
+      <td>4</td>
+      <td id="subchunk1ID">-</td>
+      <td rowspan="8">The <strong>"fmt"</strong> sub-chunk <BR> describes the format of the sound information in the
+        data sub-chunk</td>
+    </tr>
+    <tr>
+      <td>little</td>
+      <td>16</td>
+      <td style="background-color: greenyellow">Subchunk 1 Size</td>
+      <td>4</td>
+      <td id="subchunk1Size">-</td>
+    </tr>
+    <tr>
+      <td>little</td>
+      <td>20</td>
+      <td style="background-color: greenyellow">Audio Format</td>
+      <td>2</td>
+      <td id="audioFormat">-</td>
+    </tr>
+    <tr>
+      <td>little</td>
+      <td>22</td>
+      <td style="background-color: greenyellow">Num Channels</td>
+      <td>2</td>
+      <td id="numChannels">-</td>
+    </tr>
+    <tr>
+      <td>little</td>
+      <td>24</td>
+      <td style="background-color: greenyellow">Sample Rate</td>
+      <td>4</td>
+      <td id="sampleRate">-</td>
+    </tr>
+    <tr>
+      <td>little</td>
+      <td>28</td>
+      <td style="background-color: greenyellow">Byte Rate</td>
+      <td>4</td>
+      <td id="byteRate">-</td>
+    </tr>
+    <tr>
+      <td>little</td>
+      <td>32</td>
+      <td style="background-color: greenyellow">Block Align</td>
+      <td>2</td>
+      <td id="blockAlign">-</td>
+    </tr>
+    <tr>
+      <td>little</td>
+      <td>34</td>
+      <td style="background-color: greenyellow">Bits Per Sample</td>
+      <td>2</td>
+      <td id="bitsPerSample">-</td>
+    </tr>
+    <tr>
+      <td>big</td>
+      <td>36</td>
+      <td style="background-color: orange">Subchunk 2 ID</td>
+      <td>4</td>
+      <td id="subchunk2ID">-</td>
+      <td rowspan="8">The <strong>"data"</strong> sub-chunk <BR> Indicates the size of the sound information and
+        contains the raw sound
+        data</td>
+    </tr>
+    <tr>
+      <td>little</td>
+      <td>40</td>
+      <td style="background-color: orange">Subchunk 2 Size</td>
+      <td>4</td>
+      <td id="subchunk2Size">-</td>
+    </tr>
+    <tr>
+      <td>little</td>
+      <td>44</td>
+      <td style="background-color: orange">Data</td>
+      <td>--</td>
+      <td id="data">-</td>
+    </tr>
+  </table>
+
+
+  <div id="apiResponse"></div>
+
+  <p>More info about WAV format <a href="http://soundfile.sapp.org/doc/WaveFormat/" target="_blank"> here </a></p>
+  <script>
+    document.getElementById('btnParse').addEventListener('click', async () => {
+      const file = document.getElementById("file").files[0];
+
+      var data = new FormData()
+      data.append('file', file)
+
+      fetch('http://localhost:3000/api', {
+        method: 'POST',
+        body: data
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+
+          if (data.isError) {
+            document.getElementById('error').innerText = data.error;
+          }
+
+          document.getElementById('chunkID').innerText = data.result.riff[0];
+          document.getElementById('chunkSize').innerText = data.result.riff[1];
+          document.getElementById('format').innerText = data.result.riff[2];
+          document.getElementById('subchunk1ID').innerText = data.result.fmt.id;
+          document.getElementById('subchunk1Size').innerText = data.result.fmt.subChunk1Size;
+          document.getElementById('audioFormat').innerText = data.result.fmt.audioFormat;
+          document.getElementById('numChannels').innerText = data.result.fmt.numChannels;
+          document.getElementById('sampleRate').innerText = data.result.fmt.sampleRate;
+          document.getElementById('byteRate').innerText = data.result.fmt.byteRate;
+          document.getElementById('blockAlign').innerText = data.result.fmt.blockAlign;
+          document.getElementById('bitsPerSample').innerText = data.result.fmt.bitsPerSample;
+          document.getElementById('subchunk2ID').innerText = data.result.data.id;
+          document.getElementById('subchunk2Size').innerText = data.result.data.size;
+          document.getElementById('data').innerText = data.result.data.channelData[0].slice(0, 5) + "...";
+          // document.getElementById('apiResponse').innerText = JSON.stringify(data.result, null, 2);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    });
+  </script>
+</body>
+
+</html>
