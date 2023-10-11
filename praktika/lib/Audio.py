@@ -9,7 +9,7 @@ from lib.Piano import Piano
 from lib.Utils import Utils
 
 class Audio:
-  def __init__(self, image: Bitmap, piano: Piano, sample_rate = 44100, pixel_duration = 0.25, num_channels = 1):
+  def __init__(self, image: Bitmap, piano: Piano, sample_rate = 22050, pixel_duration = 0.2, num_channels = 1):
     self.image = image
     self.num_channels = num_channels
     self.piano = piano
@@ -67,7 +67,6 @@ class Audio:
 
     metadata = (
       f'Notes: {self.piano.note_start} - {self.piano.note_end} ({self.piano.frequencies[0]} - {self.piano.frequencies[-1]})\n'
-      f'Sample rate: {self.sample_rate}\n'
       f'Pixel duration: {self.pixel_duration}\n'
       f'Num pixels: {self.num_pixels}\n'
     )
