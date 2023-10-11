@@ -22,14 +22,14 @@ Feed image file you wish to convert into sound
 
 <img src="./images/moonlight@10.png" alt="moonlight" width="200"/>
 
-```bash
+```python
 image_path = "images/moonlight.tif"
 image = Bitmap(path=image_path)
 ```
 
 Optionally, print image data
 
-```bash
+```python
 print(image.toString())
 
 # Image size: 32x34
@@ -38,13 +38,13 @@ print(image.toString())
 
 Set-up piano keys by mapping darkest image color to the lowest note, and brightest color to the highest note
 
-```bash
+```python
 piano = Piano(note_start='f1', note_end='E6')
 ```
 
 Set-up audio device by providing `sample_rate` in Hz, `pixel_duration` in seconds, `num_channels`:
 
-```bash
+```python
 audio = Audio(image, piano,
           sample_rate=44100,
           pixel_duration=0.125,
@@ -54,13 +54,13 @@ audio = Audio(image, piano,
 
 Start process of converting image data into sound data
 
-```bash
+```python
 audio.process()
 ```
 
 Additionally, print audio data
 
-```bash
+```python
 print(audio.toString())
 
 # Num samples: 2998682
@@ -72,19 +72,19 @@ print(audio.toString())
 
 Save generated audio file
 
-```bash
+```python
 audio.save()
 ```
 
 Playback generated file
 
-```bash
+```python
 audio.play()
 ```
 
 Plot waveform
 
-```bash
+```python
 audio.plot()
 ```
 
