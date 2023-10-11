@@ -2,3 +2,4 @@ __pycache__
 node_modules
 praktika/images_temp
 praktika/*.tif.wav
+praktika/*.png.wav
