@@ -46,8 +46,9 @@ class Audio:
     sd.wait()
 
   def plot(self):
-    time_axis = np.linspace(0, self.get_duration(), len(self.samples))
+    plt.figure(figsize=(10, 4))
 
+    time_axis = np.linspace(0, self.get_duration(), len(self.samples))
     for channel_index in range(self.num_channels):
       plt.subplot(self.num_channels, 1, channel_index + 1)
 
@@ -60,8 +61,19 @@ class Audio:
       plt.title(f'{self.image.name} (channel {channel_index + 1})')
       plt.xlabel('Time (s)')
       plt.ylabel('Amplitude')
-
+    
     plt.tight_layout()
+    plt.subplots_adjust(bottom=0.2)
+
+    metadata = (
+      f'Notes: {self.piano.note_start} - {self.piano.note_end} ({self.piano.frequencies[0]} - {self.piano.frequencies[-1]})\n'
+      f'Sample rate: {self.sample_rate}\n'
+      f'Pixel duration: {self.pixel_duration}\n'
+      f'Num pixels: {self.num_pixels}\n'
+    )
+
+    plt.figtext(0.01, 0.01, metadata, fontsize=8)
+
     plt.show()
 
   def save(self):
@@ -92,6 +104,8 @@ class Audio:
 
     if not num_pixels:
       num_pixels = len(pixels)
+
+    self.num_pixels = num_pixels
 
     frequencies = []
     samples = []
