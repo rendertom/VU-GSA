@@ -9,8 +9,9 @@ from lib.Piano import Piano
 from lib.Utils import Utils
 
 class Audio:
-  def __init__(self, image: Bitmap, piano: Piano, sample_rate = 22050, pixel_duration = 0.2, num_channels = 1):
+  def __init__(self, image: Bitmap, piano: Piano, sample_rate = 22050, pixel_duration = 0.2, num_channels = 1, low_note_is_pause = False):
     self.image = image
+    self.low_note_is_pause = low_note_is_pause
     self.num_channels = num_channels
     self.piano = piano
     self.pixel_duration = pixel_duration
@@ -118,6 +119,9 @@ class Audio:
         index_offset += 1
       else:
         amplitude = Utils.linear_map(pixel, 0, 1, 0.1, 1)
+        if pixel == 0.0 and self.low_note_is_pause is True:
+          amplitude = 0
+
         frequency = self.piano.value_to_frequency(pixel)
         frequencies.append(frequency)
 
