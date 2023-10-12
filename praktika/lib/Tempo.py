@@ -5,6 +5,7 @@ class Tempo:
   def get_bpm(self, tempo):
     tempo_to_bpm = {
       "adagio": (66, 76),
+      "allegretto": (112, 120),
       "allegro": (120, 168),
       "andante": (76, 108),
       "andantino": (80, 108),
